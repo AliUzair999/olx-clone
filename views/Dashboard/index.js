@@ -74,8 +74,12 @@ export default function Dashboard(props) {
 
             let adsSnapshot = await getDocs(collection(db, "ads"))
             let arr = []
+            let adData;
             adsSnapshot.forEach((doc) => {
-                arr.push(doc.data())
+                adData = doc.data()
+                adData.adId = doc.id;
+                // console.log(adData)
+                arr.push(adData)
 
             })
             setTotalAds(arr)
@@ -84,6 +88,11 @@ export default function Dashboard(props) {
         }
         getData()
     }, [])
+
+    const showAd = (adId) => {
+        // console.log(adId)
+        navigate(`ad-detail/${adId}`)
+    }
 
 
     if (!done) {
@@ -101,15 +110,15 @@ export default function Dashboard(props) {
             ></input>
 
 
-            {props.userData && <> 
-            <p> <img alt="profile-img" width={30} height={30} src={props.userData.profileImage} /> Welcome {props.userData.name}
-            <button onClick={() => navigate("create-ad")}>Post an Ad</button>
-            <button onClick={() => navigate('my-profile')}>My Profile</button>
-            <button onClick={() => {
-                Logout()
-                navigate('/login', { replace: true })
-            }}>Log me Out</button>
-            </p>
+            {props.userData && <>
+                <p> <img alt="profile-img" width={30} height={30} src={props.userData.profileImage} /> Welcome {props.userData.name}
+                    <button onClick={() => navigate("create-ad")}>Post an Ad</button>
+                    <button onClick={() => navigate('my-profile')}>My Profile</button>
+                    <button onClick={() => {
+                        Logout()
+                        navigate('/login', { replace: true })
+                    }}>Log me Out</button>
+                </p>
             </>}
 
             {/* {console.log("after return", totalAds)} */}
@@ -120,7 +129,7 @@ export default function Dashboard(props) {
                 {
                     if (!search) {
                         return <>
-                            <div id={"ad" + (ind + 1)} key={(ind + 1)}>
+                            <div id={"ad" + (ind + 1)} key={(ind + 1)} onClick={()=> showAd(val.adId)}>
 
                                 <p key={"adp" + (ind + 1)} id={"adp" + (ind + 1)}> <img alt={"adi" + (ind + 1)} src={val.imagesURL[0]} width={30} height={30} key={"adi" + (ind + 1)} id={"adi" + (ind + 1)} /> {val.title}
                                     <br /> price: USD.{val.price}</p>
@@ -131,7 +140,7 @@ export default function Dashboard(props) {
 
                     else if (val.title.includes(search)) {
                         return <>
-                            <div id={"ad" + (ind + 1)} key={"ad" + (ind + 1)}>
+                            <div id={"ad" + (ind + 1)} key={"ad" + (ind + 1)} onClick={() => showAd(val.adId)}>
 
                                 <p key={"adp" + (ind + 1)} id={"adp" + (ind + 1)}> <img alt={"adi" + (ind + 1)} src={val.imagesURL[0]} width={30} height={30} key={"adi" + (ind + 1)} id={"adi" + (ind + 1)} /> {val.title}
                                     <br /> price: USD.{val.price}</p>

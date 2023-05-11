@@ -11,6 +11,7 @@ import Dashboard from "./views/Dashboard"
 import Test from "./views/Test"
 import Profile from './views/Profile';
 import CreateAd from './views/CreateAd';
+import AdDetail from './views/AdDetail';
 
 import { auth, db  } from "./config/firebase"
 import { onAuthStateChanged } from "firebase/auth"
@@ -83,6 +84,7 @@ function App() {
             <Route path="/signup" element={unProtectedRoute(<Signup />)} />
             <Route path="/login" element={unProtectedRoute(<Login />)} />
             <Route path="/dashboard" element={<Dashboard userData={userData} setUserData={setUserData} />} />
+            <Route path="/dashboard/ad-detail/:adId" element={<AdDetail/>} />
             <Route path="/dashboard/create-ad" element={protectedRoute(<CreateAd userData={userData} />)} />
             <Route path="/dashboard/my-profile" element={protectedRoute(<Profile userData={userData} />)} />
 
