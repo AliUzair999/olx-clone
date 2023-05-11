@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-import { Routes, Route, Outlet, Link } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 
 import Layout from './views/Layout'
@@ -12,7 +12,7 @@ import Test from "./views/Test"
 import Profile from './views/Profile';
 import CreateAd from './views/CreateAd';
 
-import { auth, db,  } from "./config/firebase"
+import { auth, db  } from "./config/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import {doc, getDoc} from "firebase/firestore"
 
@@ -55,14 +55,16 @@ function App() {
       return component
     }
     else {
-      return <Login />
+      return <Navigate to="/login" replace />
+      // return <Login />
 
     }
   }
 
   const unProtectedRoute = (component) => {
     if (userData) {
-      return <Dashboard userData={userData}/>
+      return <Navigate to="/dashboard" replace />
+      // return <Dashboard userData={userData}/>
     }
     else {
       return component
