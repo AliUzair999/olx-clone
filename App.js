@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import { Routes, Route, Outlet, Link } from 'react-router-dom'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Layout from './views/Layout'
 import ErrorPage from './views/ErrorPage'
@@ -12,13 +12,63 @@ import Test from "./views/Test"
 import Profile from './views/Profile';
 import CreateAd from './views/CreateAd';
 
+import { auth, db,  } from "./config/firebase"
+import { onAuthStateChanged } from "firebase/auth"
+import {doc, getDoc} from "firebase/firestore"
+
+
+
 
 
 function App() {
 
   const [page, setPage] = useState('login')
   const [userData, setUserData] = useState("")
+  let uid;
   // console.log(userData)
+
+  useEffect(() => {
+       onAuthStateChanged(auth, (user) => {
+        // console.log(user?.data)
+        if (user) {
+          uid = user.uid;
+          async function abc() {
+            // console.log("abc worked")
+            const usersDocRef = await doc(db, "users", uid)
+            const usersDocData = await getDoc(usersDocRef)
+            // console.log(usersDocData)
+            // console.log(usersDocData.data())
+            setUserData(usersDocData.data())
+          }
+          abc()
+        }
+        else {
+          // console.log("else worked")
+          setUserData(null)
+        }
+      })
+    
+  }, [])
+
+  const protectedRoute = (component) => {
+    if (userData) {
+      return component
+    }
+    else {
+      return <Login />
+
+    }
+  }
+
+  const unProtectedRoute = (component) => {
+    if (userData) {
+      return <Dashboard userData={userData}/>
+    }
+    else {
+      return component
+
+    }
+  }
 
 
   return (
@@ -28,13 +78,13 @@ function App() {
 
         <Routes>
           <Route path='/' element={<Layout />}>
-            <Route path="/signup" element={<Signup />}/>
-            <Route path="/login" element={<Login />}/>
-            <Route path="/dashboard" element={<Dashboard userData={userData} setUserData={setUserData}/>}/>
-            <Route path="/dashboard/create-ad" element={<CreateAd userData={userData} setUserData={setUserData}/>}/>
-            <Route path="/dashboard/my-profile" element={<Profile userData={userData} setUserData={setUserData}/>}/>
+            <Route path="/signup" element={unProtectedRoute(<Signup />)} />
+            <Route path="/login" element={unProtectedRoute(<Login />)} />
+            <Route path="/dashboard" element={<Dashboard userData={userData} setUserData={setUserData} />} />
+            <Route path="/dashboard/create-ad" element={protectedRoute(<CreateAd userData={userData} />)} />
+            <Route path="/dashboard/my-profile" element={protectedRoute(<Profile userData={userData} />)} />
 
-            <Route path="*"  element={<ErrorPage />}/>
+            <Route path="*" element={<ErrorPage />} />
 
           </Route>
 

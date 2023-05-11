@@ -1,7 +1,7 @@
 import { storage, db, auth } from "../../config/firebase"
 import { doc, getDoc, collection, getDocs } from "firebase/firestore"
 import { useEffect, useState } from "react"
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import Logout from "../../component/Logout"
 
@@ -64,11 +64,13 @@ export default function Dashboard(props) {
     useEffect(() => {
         async function getData() {
 
-            const usersDocRef = await doc(db, "users", uid)
-            const usersDocData = await getDoc(usersDocRef)
+
+            // SHIFTED TO APP.JS FILE
+            // const usersDocRef = await doc(db, "users", uid)
+            // const usersDocData = await getDoc(usersDocRef)
             // console.log(usersDocData)
             // console.log(usersDocData.data())
-            props.setUserData({ ...usersDocData.data() })
+            // props.setUserData(usersDocData.data())
 
             let adsSnapshot = await getDocs(collection(db, "ads"))
             let arr = []
@@ -84,29 +86,31 @@ export default function Dashboard(props) {
     }, [])
 
 
-     if (!uid) {
-        return  <p>You are not logged in <button onClick={() => {navigate('/login', {replace:true})}}>Login</button></p>
+    if (!done) {
+        return <p>Loading</p>
     }
-    else if (!done) {
-        return  <p>Loading</p>
-    }
-   
+
     else {
         return <>
             <h3>This is Dashboard</h3>
 
-            <p> <img alt="profile-img" width={30} height={30} src={props.userData.profileImage} /> Welcome {props.userData.name}</p>
             <input
                 placeholder="Looking for something"
                 value={search}
                 onChange={(e) => { setSearch(e.target.value) }}
             ></input>
+
+
+            {props.userData && <> 
+            <p> <img alt="profile-img" width={30} height={30} src={props.userData.profileImage} /> Welcome {props.userData.name}
             <button onClick={() => navigate("create-ad")}>Post an Ad</button>
             <button onClick={() => navigate('my-profile')}>My Profile</button>
-            <button onClick={() =>{
+            <button onClick={() => {
                 Logout()
-                navigate('/login', {replace: true})
+                navigate('/login', { replace: true })
             }}>Log me Out</button>
+            </p>
+            </>}
 
             {/* {console.log("after return", totalAds)} */}
             <p>Total ads are;  </p>
@@ -116,7 +120,7 @@ export default function Dashboard(props) {
                 {
                     if (!search) {
                         return <>
-                            <div id={"ad" + (ind + 1)} key={"ad" + (ind + 1)}>
+                            <div id={"ad" + (ind + 1)} key={(ind + 1)}>
 
                                 <p key={"adp" + (ind + 1)} id={"adp" + (ind + 1)}> <img alt={"adi" + (ind + 1)} src={val.imagesURL[0]} width={30} height={30} key={"adi" + (ind + 1)} id={"adi" + (ind + 1)} /> {val.title}
                                     <br /> price: USD.{val.price}</p>
@@ -127,12 +131,12 @@ export default function Dashboard(props) {
 
                     else if (val.title.includes(search)) {
                         return <>
-                        <div id={"ad" + (ind + 1)} key={"ad" + (ind + 1)}>
+                            <div id={"ad" + (ind + 1)} key={"ad" + (ind + 1)}>
 
-                            <p key={"adp" + (ind + 1)} id={"adp" + (ind + 1)}> <img alt={"adi" + (ind + 1)} src={val.imagesURL[0]} width={30} height={30} key={"adi" + (ind + 1)} id={"adi" + (ind + 1)} /> {val.title}
-                                <br /> price: USD.{val.price}</p>
+                                <p key={"adp" + (ind + 1)} id={"adp" + (ind + 1)}> <img alt={"adi" + (ind + 1)} src={val.imagesURL[0]} width={30} height={30} key={"adi" + (ind + 1)} id={"adi" + (ind + 1)} /> {val.title}
+                                    <br /> price: USD.{val.price}</p>
 
-                        </div>
+                            </div>
                         </>
                     }
                 }

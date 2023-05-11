@@ -23,6 +23,10 @@ export default function Layout() {
           <li>
             <Link to="/login">Log In</Link>
           </li>
+
+          <li>
+            <Link to="/dashboard/my-profile">My Profile</Link>
+          </li>
           
           <li>
             <Link to="/nothing-here">Nothing Here</Link>
